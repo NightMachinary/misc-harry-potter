@@ -22,7 +22,7 @@ col=$3
 #Printf $file
 #$emacsdir/
 emacsclient \
-    --no-wait \
+    -nc \
     -e \
     "(progn
 
