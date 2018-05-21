@@ -1,0 +1,36 @@
+#!/bin/bash
+printf '\e[1;40;92m'
+clear
+printf "All TNT releases are provided\n\tfree of charge for educational and uncommercial reasons.\n"
+printf "Все релизы TNT предоставляются\n\tбезвозмездно для образовательных и некоммерческих целей.\n"
+echo ""
+echo "Press ENTER if you agree or close this window!"
+echo "Нажмите ENTER, если вы согласны, или закройте окно!"
+read ok
+echo "Please wait..."
+echo "Пожалуйста, подождите..."
+echo ""
+DMG=$(dirname "$0")
+DIR=/tmp/tnt$RANDOM
+rm -rf $DIR
+mkdir -p $DIR
+cp "$DMG/Manual install"/*.dmg $DIR
+xattr -r -d com.apple.quarantine $DIR/*.dmg  &>/dev/null
+#if [ $? -ne 0 ]; then
+# echo "Failed to add a Gatekeep exception, please try manual installation!"
+# echo "Ошибка добавления исключения Gatekeep, установите программу вручную!"
+# printf '\e[39m'
+# exit 1
+#fi
+mkdir -p $DIR/mount
+hdiutil attach -owners on -quiet -noverify -mountpoint $DIR/mount $DIR/*.dmg -shadow $DIR/shadow
+find $DIR/mount -maxdepth 1 \! -type l \! -path $DIR/mount -exec xattr -r -d com.apple.quarantine {} \; &>/dev/null
+echo ""
+echo "If the application fails to open wait a bit and try again!"
+echo "Если программа не открывается, подождите немного и попробуйте снова!"
+echo ""
+echo "Have a nice day/night!"
+echo "Приятного дня/вечера!"
+(sleep 5 && hdiutil detach -force "$DMG") &
+printf '\e[39m'
+exit 0
